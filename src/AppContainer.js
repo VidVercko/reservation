@@ -10,6 +10,7 @@ import rootReducer from "./store";
 
 import HomePage from './screens/HomePage';
 import AuthNavigator from './navigators/AuthNavigator';
+import AppNavigator from './navigators/AppNavigator';
 
 import { colors } from './assets/style';
 const Stack = createNativeStackNavigator();
@@ -31,6 +32,7 @@ function AppContainer() {
         <Stack.Navigator initialRouteName="Auth">
           <Stack.Screen options={{ headerShown: false }} name="HomePage" component={HomePage} />
           <Stack.Screen options={{ headerShown: false }} name="Auth" component={AuthNavigator} />
+          <Stack.Screen options={{ headerShown: false }} name="App" component={AppNavigator} />
         </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaProvider>

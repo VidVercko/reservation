@@ -3,25 +3,26 @@ import { useDispatch, useSelector } from 'react-redux'
 import { View } from 'react-native';
 import { colors } from '../../assets/style';
 import { Input, Button } from 'react-native-elements';
-//import { actions } from '../../store/user';
+import { userLogin, userLogout } from '../../actions/user';
 
 export default ({ navigation }) => {
-    const isLoading = false; // useSelector(state => state.user.isFetching === true);
-    const isLoggedIn = false; // useSelector(state => state.user.isLoggedIn && state.user.jwt !== null);
+    const isLoading = useSelector(state => state.user.loading === true);
+    const isAuth = useSelector(state => state.user.jwt !== null);
     const dispatch = useDispatch();
 
     const handleLogin = () => {
-        //dispatch(actions.login({ email, password }));
+        dispatch(userLogin({}));
+        navigation.navigate('App');
     }
 
     const [email, setEmail] = useState("john.doe@gmail.com");
     const [password, setPassword] = useState("geslo123");
 
     useEffect(() => {
-        //dispatch(actions.logOut()) //reset state and clear any errors
+        dispatch(userLogout());
     }, [dispatch]);
 
-    if (isLoggedIn) {
+    if (isAuth) {
         navigation.getParent()?.navigate('App');
         return null;
     }

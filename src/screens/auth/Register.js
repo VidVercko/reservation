@@ -1,28 +1,28 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { View, Text } from 'react-native';
+import { View, Image} from 'react-native';
 import { colors } from '../../assets/style';
 import { Input, Button } from 'react-native-elements';
-//import { actions } from '../../store/user';
+import { userRegister, userLogout } from '../../actions/user';
 
 export default ({ navigation }) => {
-    const isLoading = useSelector(state => state.user.isFetching === true);
-    const isLoggedIn = useSelector(state => state.user.isLoggedIn && state.user.jwt !== null);
+    const isLoading = useSelector(state => state.user.loading === true);
+    const isAuth = useSelector(state => state.user.jwt !== null);
     const dispatch = useDispatch();
 
     const [email, setEmail] = useState("");
     const [fullname, setfullname] = useState("");
     const [password, setPassword] = useState("");
 
-    function registerAction() {
-        dispatch(actions.register({ email, fullname, password }));
+    function handleRegister() {
+        dispatch(userRegister({ email, fullname, password }));
     }
 
     useEffect(() => {
-        //dispatch(actions.logOut()) //reset state and clear any errors
+        dispatch(userLogout());
     }, [dispatch]);
 
-    if (isLoggedIn) {
+    if (isAuth) {
         navigation.getParent()?.navigate('App');
         return null;
     }
@@ -61,7 +61,7 @@ export default ({ navigation }) => {
                     width: '95%',
                     marginVertical: 10,
                 }}
-                onPress={registerAction}
+                onPress={handleRegister}
                 loading={isLoading}
             />
         </View>
