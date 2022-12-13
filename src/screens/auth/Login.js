@@ -12,12 +12,15 @@ export default ({ navigation }) => {
     const isAuth = useSelector(state => state.user.jwt !== null);
     const dispatch = useDispatch();
 
-    const handleLogin = () => {
-        dispatch(userLogin({}));
-        navigation.navigate('App');
-    }
-
-    const [email, setEmail] = useState("john.doe@gmail.com");
+    function handleLogin() {
+        const user = {
+          username: username,
+          password: password,
+        };
+        dispatch(userLogin(user));
+      }
+    
+    const [username, setUsername] = useState("sexyfirma");
     const [password, setPassword] = useState("geslo123");
 
     useEffect(() => {
@@ -32,14 +35,13 @@ export default ({ navigation }) => {
     return (
         <View style={{ flex: 1, backgroundColor: colors.background, justifyContent: 'center', alignItems: 'center' }}>
             <ImageBackground source={image} style={ {width: "100%", height: "100%"}}>
-
             <AuthWrapper>
                 <Input
                     placeholder='Email'
                     leftIcon={{ type: 'ion-icons', name: 'mail', color: colors.dark }}
-                    onChangeText={setEmail}
+                    onChangeText={setUsername}
                     inputStyle={{'color': colors.dark}}
-                    value={email}
+                    value={username}
                 />
                 <Input
                     placeholder='Password'
