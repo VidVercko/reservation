@@ -9,6 +9,7 @@ import Profile from '../screens/app/Profile';
 import Dashboard from '../screens/app/Dashboard';
 
 import { tabBarStyle } from '../assets/style';
+import Users from '../screens/app/Users';
 
 const Tab = createBottomTabNavigator();
 
@@ -35,7 +36,7 @@ export default function AppNavigator() {
         >
             <Tab.Screen name="Dashboard" component={Dashboard} options={(props) => Header(props)} />
             {isAuth ? <Tab.Screen name="Profile" component={Profile} options={(props) => Header(props)} /> : null}
-            <Tab.Screen name="Users" component={Dashboard} options={(props) => Header(props)} />
+            <Tab.Screen name="Users" component={Users} options={(props) => Header(props)} />
         </Tab.Navigator>
     );
 }
