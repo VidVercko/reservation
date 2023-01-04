@@ -1,36 +1,54 @@
-import {
-    USER_REGISTER_START,
-    USER_REGISTER_SUCCESS,
-    USER_LOGIN_START,
-    USER_LOGIN_SUCCESS,
-    USER_LOGIN_FAIL,
-    USER_LOGOUT,
-    USER_REGISTER_FAIL
-} from './types';
+import * as TYPE from './types';
 
 const initialState = {
-    user: {},
-    jwt: null,
+    accessToken: null,
+    refreshToken: null,
+    profile: {},
     loading: false
 }
 
+
 export default function (state = initialState, action) {
     switch (action.type) {
-        case USER_REGISTER_START:
+        case TYPE.USER_REGISTER_START:
+        case TYPE.USER_LOGIN_START:
             return { ...initialState, loading: true };
-        case USER_REGISTER_SUCCESS:
-            return { ...state, loading: false, jwt: action.payload.jwt, user: action.payload.user };
-        case USER_REGISTER_FAIL:
-            return {...initialState};
-        case USER_LOGIN_START:
-            return { ...initialState, loading: true };
-        case USER_LOGIN_SUCCESS:
-            return { ...state, loading: false, jwt: action.payload.jwt, user: action.payload.user };
-        case USER_LOGIN_FAIL:
-            return { ...initialState };
-        case USER_LOGOUT:
+
+        case TYPE.USER_GET_START:
+        case TYPE.USER_PROFILE_UPDATE_START:
+            return { ...state, loading: true };
+
+        case TYPE.USER_REGISTER_SUCCESS:
+            return { ...state, loading: false };
+        case TYPE.USER_LOGIN_SUCCESS:
+            const updateObj = {
+                accessToken: action.payload.accessToken,
+                refreshToken: action.payload.refreshToken,
+            };
+
+            return { ...state, loading: false, ...updateObj };
+        case TYPE.USER_GET_SUCCESS:
+        case TYPE.USER_PROFILE_UPDATE_SUCCESS:
+            return {
+                ...state, loading: false, profile: {
+                    ...state.profile,
+                    ...action.payload.profile
+                }
+            };
+
+        case TYPE.USER_PROFILE_UPDATE_FAIL:
+            return { ...state, loading: false };
+
+        // fails
+        case TYPE.USER_REGISTER_FAIL:
+        case TYPE.USER_LOGIN_FAIL:
+        case TYPE.USER_GET_FAIL:
+        case TYPE.USER_LOGOUT:
             return { ...initialState };
         default:
             return state;
     }
 }
+
+export const isUserCompany = state => !!state.user?.profile?.is_company ?? false;
+export const isProfileLoaded = state => state?.user?.profile?.id ?? false;

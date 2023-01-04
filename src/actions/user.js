@@ -3,8 +3,6 @@ import * as toast from './mobileToast';
 import { asFormData, apiRequest } from './helper';
 import { getCompanies } from './common';
 
-
-
 export const userLogin = ({ username, password }) => {
     return async (dispatch) => {
         dispatch({ type: TYPE.USER_LOGIN_START });
@@ -67,6 +65,7 @@ export const updateProfile = ({ id, phone, bio, location, birth_date }) => {
 export const getCurrentUser = () => {
     return async (dispatch, getState) => {
         const { accessToken } = getState().user;
+        console.log(getState());
         dispatch({ type: TYPE.USER_GET_START });
         apiRequest({
             url: '/users/current/',

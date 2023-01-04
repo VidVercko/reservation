@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef  } from 'react'
 import { Text, View, Modal, StyleSheet, Pressable, ScrollView } from 'react-native'
-import { Button } from 'react-native-elements'
+import { Button, SearchBar } from 'react-native-elements'
 import { useSelector, useDispatch } from "react-redux";
 import { SelectList } from 'react-native-dropdown-select-list'
 import { Title, DataTable, Paper } from 'react-native-paper';
@@ -8,11 +8,22 @@ import moment from "moment";
 import Timetable from "react-native-calendar-timetable";
 import MyItemCard from '../../components/CardComponent';
 import WeeklyCalendar from 'react-native-weekly-calendar';
+import { getCourtTypes, getCourts } from '../../actions/common';
+
 
 export default function({ navigation }) {
+    const dispatch = useDispatch();
+  
+    const isLoading = useSelector((state) => state.common.loading);
+    const courts = useSelector((state) => state.common.locationCourts ?? []);
+    const courtTypes = useSelector((state) => state.common.courtTypes);
+  
+    const courtTypeRef = useRef(null);
+    const searchRef = useRef(null);
 
+    const [search, setSearch] = React.useState("");
+    
     const [selectedType, setSelectedType] = React.useState("");
-    const [selectedLocation, setSelectedLocation] = React.useState("");
     const [modalVisible, setModalVisible] = useState(false);
     const [date] = React.useState(new Date());
 
@@ -26,7 +37,7 @@ export default function({ navigation }) {
         { 'start': '2023-01-02 19:00:00', 'duration': '2:00:00', 'note': 'ODBOJKA - FIRMA Z' },
         { 'start': '2023-01-02 18:00:00', 'duration': '01:00:00', 'note': 'PROSTO' },        
         { 'start': '2023-01-02 21:00:00', 'duration': '01:00:00', 'note': 'PROSTO' },
-      ]
+    ]
 
     const reservations = [
         {
@@ -53,52 +64,44 @@ export default function({ navigation }) {
             time_start: '20:00',
             time_end: '22:00' 
         },
-      ];
+    ];
 
-    const type = [
-          {key:'1', value:'Football'},
-          {key:'2', value:'Basketball'},
-          {key:'3', value:'Gym'},
-          {key:'4', value:'Volleyball'},
-          {key:'5', value:'Tennis'},
-          {key:'6', value:'Golf'},
-          {key:'7', value:'Handball'},
-    ]
-
-      const locations = [
-        {key:'1', value:'Ljubljana'},
-        {key:'2', value:'Maribor'},
-        {key:'3', value:'Kranj'},
-        {key:'4', value:'Velenje'},
-        {key:'5', value:'Slovenj Gradec'},
-        {key:'6', value:'Ravne'},
-    ]
+    useEffect(() => {
+        dispatch(getCourtTypes());
+        dispatch(
+          getCourts({
+            search: searchRef?.current?.props?.value,
+            courtType: courtTypeRef?.current?.value,
+          })
+        );
+    }, [courtTypeRef]);
 
     function showLocation(e) {
         console.log(e)
         setModalVisible(true)
     }
 
+    let type = [];
+
+    courtTypes.forEach(function (arrayItem) {
+        type.push({
+            key: arrayItem.id,
+            value: arrayItem.name,
+        });
+    });
+
+    function filter() {
+        dispatch(
+          getCourts({
+            search: searchRef?.current?.props?.value,
+            courtType: courtTypeRef?.current?.value,
+          })
+        );
+    }
+
+    console.log(courts)
+
     const RenderDataTable = () => {
-        let filtered = reservations;
-        if(selectedLocation.length != "") { 
-            filtered = reservations.filter(function(item){
-                return item.location == selectedLocation;
-            }).map(function({location, type}){
-                return {location, type};
-            });
-        }
-
-        if(selectedType.length != "") { 
-            filtered = reservations.filter(function(item){
-                return item.location == selectedType;
-            }).map(function({location, type}){
-                return {location, type};
-            });
-        }
-
-        console.log(filtered);
-
         return (
             <DataTable> 
                 <DataTable.Header>
@@ -106,11 +109,9 @@ export default function({ navigation }) {
                     <DataTable.Title>Location</DataTable.Title>
                     <DataTable.Title>More info</DataTable.Title>
                 </DataTable.Header>
-                {
-                filtered.map((data, index) =>(
+                {courts.map((court, index) =>(
                     <DataTable.Row>
-                        <DataTable.Cell>{data.type}</DataTable.Cell>
-                        <DataTable.Cell>{data.location}</DataTable.Cell>
+                        <DataTable.Cell>{court.name}</DataTable.Cell>
                         <DataTable.Cell> 
                             <Button id={index} title={"edit"} onPress={(event) => showLocation(event)} />
                         </DataTable.Cell>
@@ -118,23 +119,28 @@ export default function({ navigation }) {
                 ))}
             </DataTable>
         )
-      }
-
+    }
+    
+    const updateSearch = (search) => {
+        setSearch(search);
+        filter();
+    };
 
     return (
         <View>
             <Text>
                 Available reservations
             </Text>
-            <SelectList 
-                setSelected={(val) => setSelectedType(val)} 
-                data={type} 
-                save="value"
+            <SearchBar
+                placeholder="Type Here..."
+                onChangeText={updateSearch}
+                value={search}
+                ref={searchRef}
             />
 
             <SelectList 
-                setSelected={(val) => setSelectedLocation(val)} 
-                data={locations} 
+                setSelected={(val) => setSelectedType(val)} 
+                data={type} 
                 save="value"
             />
 

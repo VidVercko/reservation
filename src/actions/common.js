@@ -1,12 +1,17 @@
 import * as TYPE from '../store/types';
 import { asFormData, apiRequest } from './helper';
 
-export const getCompanies = () => {
+export const getCompanies = (filters) => {
     return async (dispatch, getState) => {
         const { accessToken } = getState().user;
+        let url = '/users/?is_company=1';
+        if (filters?.search) {
+            url += `&search=${filters.search}`;
+        }
+
         dispatch({ type: TYPE.COMMON_GET_COMPANIES_START });
         apiRequest({
-            url: '/users/?is_company=1',
+            url,
             method: 'GET',
             token: accessToken
         }).then((res) => {
@@ -23,6 +28,8 @@ export const getCompanies = () => {
 export const getCourtTypes = () => {
     return async (dispatch, getState) => {
         const { accessToken } = getState().user;
+        console.log(getState());
+
         dispatch({ type: TYPE.COMMON_GET_COURT_TYPES_START });
         apiRequest({
             url: '/court-types/',
@@ -39,21 +46,64 @@ export const getCourtTypes = () => {
     };
 }
 
-export const getLocationCourts = (locationId) => {
+export const getLocations = filters => {
     return async (dispatch, getState) => {
         const { accessToken } = getState().user;
-        dispatch({ type: TYPE.COMMON_GET_LOCATION_COURTS_START });
+        let url = `/locations/?owner=${filters.companyId}`;
+        if (filters?.search) {
+            url += `&search=${filters.search}`;
+        }
+
+        dispatch({ type: TYPE.COMMON_GET_LOCATIONS_START });
         apiRequest({
-            url: `/management/locations/${locationId}/courts/`,
+            url,
             method: 'GET',
             token: accessToken
         }).then((res) => {
             dispatch({
-                type: TYPE.COMMON_GET_LOCATION_COURTS_SUCCESS,
+                type: TYPE.COMMON_GET_LOCATIONS_SUCCESS,
+                payload: { locations: res?.results ?? [] }
+            });
+        }).catch((_) => {
+            dispatch({ type: TYPE.COMMON_GET_LOCATIONS_FAIL });
+        });
+    };
+}
+
+export const getCourts = filters => {
+    return async (dispatch, getState) => {
+        const { accessToken } = getState().user;
+        dispatch({ type: TYPE.COMMON_GET_COURTS_START });
+        let url = `/courts/`;
+        if (Object.keys(filters).length) {
+            url += '?';
+        }
+
+        if (filters?.location) {
+            url += `location=${filters.location}`;
+        }
+
+        if (filters?.search) {
+            if (url[url.length - 1] !== '?') url += '&';
+            url += `search=${filters.search}`;
+        }
+
+        if (filters?.courtType) {
+            if (url[url.length - 1] !== '?') url += '&';
+            url += `court_types=${filters.courtType}`;
+        }
+
+        apiRequest({
+            url,
+            method: 'GET',
+            token: accessToken
+        }).then((res) => {
+            dispatch({
+                type: TYPE.COMMON_GET_COURTS_SUCCESS,
                 payload: { locationCourts: res?.results ?? [] }
             });
         }).catch((_) => {
-            dispatch({ type: TYPE.COMMON_GET_LOCATION_COURTS_FAIL });
+            dispatch({ type: TYPE.COMMON_GET_COURTS_FAIL });
         });
-    }
+    };
 }

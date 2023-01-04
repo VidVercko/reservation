@@ -6,10 +6,14 @@ import { Input, Button } from 'react-native-elements';
 import { userLogin, userLogout } from '../../actions/user';
 import AuthWrapper from '../../components/AuthWrapper';
 import image from "../../assets/landing1.jpg"
+import { isProfileLoaded } from '../../store/user';
+
 
 export default ({ navigation }) => {
-    const isLoading = useSelector(state => state.user.loading === true);
-    const isAuth = useSelector(state => state.user.jwt !== null);
+    const isAuth = useSelector((state) => !!state.user.accessToken);
+    const isProfile = useSelector(isProfileLoaded);
+    const loading = useSelector(state => state.user?.loading ?? false);
+
     const dispatch = useDispatch();
 
     function handleLogin() {
@@ -20,17 +24,18 @@ export default ({ navigation }) => {
         dispatch(userLogin(user));
       }
     
-    const [username, setUsername] = useState("sexyfirma");
-    const [password, setPassword] = useState("geslo123");
+    const [username, setUsername] = useState("mobilni_test");
+    const [password, setPassword] = useState("Mycfyt-nehben-6vypmo");
 
     useEffect(() => {
         dispatch(userLogout());
     }, [dispatch]);
 
-    if (isAuth) {
-        navigation.getParent()?.navigate('App');
-        return null;
-    }
+    useEffect(() => {
+        if (isAuth && isProfile) {
+            navigation.getParent()?.navigate('App');
+        }
+      }, [isAuth, isProfile]);
 
     return (
         <View style={{ flex: 1, backgroundColor: colors.background, justifyContent: 'center', alignItems: 'center' }}>
@@ -65,7 +70,7 @@ export default ({ navigation }) => {
                         marginVertical: 10,
                     }}
                     onPress={handleLogin}
-                    loading={isLoading}
+                    loading={loading}
                 />
             </AuthWrapper>
             </ImageBackground>
