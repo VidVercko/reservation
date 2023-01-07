@@ -1,6 +1,6 @@
 import * as TYPE from '../store/types';
 import * as toast from './mobileToast';
-import { asFormData, apiRequest } from './helper';
+import { asFormData, apiRequest } from './helpers';
 import { getCompanies } from './common';
 
 export const userLogin = ({ username, password }) => {
@@ -15,7 +15,7 @@ export const userLogin = ({ username, password }) => {
             dispatch(getCurrentUser());
         }).catch((_) => {
             dispatch({ type: TYPE.USER_LOGIN_FAIL });
-            toast.warning("Login failed");
+            ////toast.warning("Login failed");
         });
     }
 }
@@ -33,7 +33,7 @@ export const userRegister = ({ username, email, password, first_name, last_name 
             dispatch(userLogin({ username, password }));
         }).catch((_) => {
             dispatch({ type: TYPE.USER_REGISTER_FAIL });
-            toast.warning("Register failed");
+            ////toast.warning("Register failed");
         });
     }
 }
@@ -54,10 +54,10 @@ export const updateProfile = ({ id, phone, bio, location, birth_date }) => {
                     profile: { id, phone, bio, location, birth_date }
                 }
             });
-            toast.success("Profile update was successful");
+            ////toast.success("Profile update was successful");
         }).catch((_) => {
             dispatch({ type: TYPE.USER_PROFILE_UPDATE_FAIL });
-            toast.warning("Failed to update profile");
+            ////toast.warning("Failed to update profile");
         });
     }
 }
@@ -73,15 +73,15 @@ export const getCurrentUser = () => {
             token: accessToken
         }).then((res) => {
             if (res?.is_company) {
-                toast.warning('mobile app is not for companies');
+                ////toast.warning('mobile app is not for companies');
             }
             else {
                 dispatch({ type: TYPE.USER_GET_SUCCESS, payload: { profile: res } });
-                toast.success('Login success');
+                ////toast.success('Login success');
             }
         }).catch((_) => {
             dispatch({ type: TYPE.USER_GET_FAIL });
-            toast.warning("Failed to get current user");
+            ////toast.warning("Failed to get current user");
         });
     };
 }

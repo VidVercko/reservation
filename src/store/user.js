@@ -5,8 +5,7 @@ const initialState = {
     refreshToken: null,
     profile: {},
     loading: false
-}
-
+};
 
 export default function (state = initialState, action) {
     switch (action.type) {
@@ -49,6 +48,3 @@ export default function (state = initialState, action) {
             return state;
     }
 }
-
-export const isUserCompany = state => !!state.user?.profile?.is_company ?? false;
-export const isProfileLoaded = state => state?.user?.profile?.id ?? false;
