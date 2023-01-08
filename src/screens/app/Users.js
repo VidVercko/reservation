@@ -35,10 +35,6 @@ export default function({ navigation }) {
     const [modalVisible, setModalVisible] = useState(false);
     const [date] = React.useState(new Date());
 
-    const [from] = React.useState(moment().subtract(5, 'days').toDate());
-    const [till] = React.useState(moment().add(3, 'days').toISOString());
-    const range = {from, till};
-
     const { courtId, locationId } = useParams();
 
     const [scheduleDate, setScheduleDate] = useState(new Date());
@@ -89,7 +85,7 @@ export default function({ navigation }) {
 
     console.log(courts)
 
-    const numberOfItemsPerPageList = [6,7,8,9,10];
+    const numberOfItemsPerPageList = [2,3,4];
 
     const items = [
       {
@@ -116,7 +112,7 @@ export default function({ navigation }) {
 
     const [page, setPage] = React.useState(0);
     const [numberOfItemsPerPage, onItemsPerPageChange] = React.useState(numberOfItemsPerPageList[0]);
-    const fromm = page * numberOfItemsPerPage;
+    const from = page * numberOfItemsPerPage;
     const to = Math.min((page + 1) * numberOfItemsPerPage, items.length);
   
     React.useEffect(() => {
@@ -126,7 +122,7 @@ export default function({ navigation }) {
 
     const RenderDataTable = () => {
         return (
-          <PaperProvider>
+            <View>
             <DataTable> 
                 <DataTable.Header>
                     <DataTable.Title>Name</DataTable.Title>
@@ -141,19 +137,17 @@ export default function({ navigation }) {
                         </DataTable.Cell>
                     </DataTable.Row>
                 ))}
-        <DataTable.Pagination
-          page={page}
-          numberOfPages={Math.ceil(items.length / numberOfItemsPerPage)}
-          onPageChange={(page) => setPage(page)}
-          label={`${fromm + 1}-${to} of ${items.length}`}
-          showFastPaginationControls
-          numberOfItemsPerPageList={numberOfItemsPerPageList}
-          numberOfItemsPerPage={numberOfItemsPerPage}
-          onItemsPerPageChange={onItemsPerPageChange}
-          selectPageDropdownLabel={'Rows per page'}
-        />
+                <DataTable.Pagination
+                  page={page}
+                  numberOfPages={Math.ceil(items.length / numberOfItemsPerPage)}
+                  onPageChange={(page) => setPage(page)}
+                  label={`${from + 1}-${to} of ${items.length}`}
+                  showFastPaginationControls
+                  numberOfItemsPerPageList={numberOfItemsPerPageList}
+                  numberOfItemsPerPage={numberOfItemsPerPage}
+                />
             </DataTable>
-          </PaperProvider>
+            </View>
         )
     }
     
