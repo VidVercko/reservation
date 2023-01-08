@@ -74,6 +74,7 @@ export const getCurrentUser = () => {
         }).then((res) => {
             if (res?.is_company) {
                 toast.showMsg('mobile app is not for companies');
+                dispatch({ type: TYPE.USER_GET_FAIL });
             }
             else {
                 dispatch({ type: TYPE.USER_GET_SUCCESS, payload: { profile: res } });

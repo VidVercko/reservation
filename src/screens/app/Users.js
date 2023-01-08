@@ -3,16 +3,22 @@ import { Text, View, Modal, StyleSheet, Pressable, ScrollView } from 'react-nati
 import { Button, SearchBar } from 'react-native-elements'
 import { useSelector, useDispatch } from "react-redux";
 import { SelectList } from 'react-native-dropdown-select-list'
-import { Title, DataTable, Paper } from 'react-native-paper';
+import { Title, DataTable, Paper , PaperProvider} from 'react-native-paper';
 import moment from "moment";
 import Timetable from "react-native-calendar-timetable";
 import MyItemCard from '../../components/CardComponent';
+import { getCourtTypes, getCourts, getCourtDetail, getLocationDetail } from '../../actions/common';
+import { getManagementSchedule } from '../../actions/management';
+import { useParams } from "react-router-dom";
+import MakeReservationModal from '../../components/modals/MakeReservationModal';
 import WeeklyCalendar from 'react-native-weekly-calendar';
-import { getCourtTypes, getCourts } from '../../actions/common';
+
 
 
 export default function({ navigation }) {
     const dispatch = useDispatch();
+    const [court, setCourt] = useState({});
+
   
     const isLoading = useSelector((state) => state.common.loading);
     const courts = useSelector((state) => state.common.locationCourts ?? []);
@@ -31,40 +37,28 @@ export default function({ navigation }) {
     const [till] = React.useState(moment().add(3, 'days').toISOString());
     const range = {from, till};
 
-    const sampleEvents = [
-        { 'start': '2023-01-02 08:00:00', 'duration': '08:00:00', 'note': 'PROSTO' },
-        { 'start': '2023-01-02 16:00:00', 'duration': '02:00:00', 'note': 'ODBOJKA - FIRMA X' },
-        { 'start': '2023-01-02 19:00:00', 'duration': '2:00:00', 'note': 'ODBOJKA - FIRMA Z' },
-        { 'start': '2023-01-02 18:00:00', 'duration': '01:00:00', 'note': 'PROSTO' },        
-        { 'start': '2023-01-02 21:00:00', 'duration': '01:00:00', 'note': 'PROSTO' },
-    ]
+    const { courtId, locationId } = useParams();
 
-    const reservations = [
-        {
-          location: 'Ljubljana',
-          type: 'Basketball',
-          time_start: '14:00',
-          time_end: '15:00' 
-        },
-        {
-            location: 'Rožna',
-            type: 'Football',
-            time_start: '9:00',
-            time_end: '10:00' 
-        },
-        {
-            location: 'Kranj',
-            type: 'Golf',
-            time_start: '17:00',
-            time_end: '18:00' 
-        },
-        {
-            location: 'Mehika',
-            type: 'Escape',
-            time_start: '20:00',
-            time_end: '22:00' 
-        },
-    ];
+    const [scheduleDate, setScheduleDate] = useState(new Date());
+
+    console.log(scheduleDate);
+
+    const sampleEvents = [
+      { 'start': '2023-01-02 08:00:00', 'duration': '08:00:00', 'note': 'PROSTO' },
+      { 'start': '2023-01-02 16:00:00', 'duration': '02:00:00', 'note': 'ODBOJKA - FIRMA X' },
+      { 'start': '2023-01-02 19:00:00', 'duration': '2:00:00', 'note': 'ODBOJKA - FIRMA Z' },
+      { 'start': '2023-01-02 18:00:00', 'duration': '01:00:00', 'note': 'PROSTO' },        
+      { 'start': '2023-01-02 21:00:00', 'duration': '01:00:00', 'note': 'PROSTO' },
+  ]
+
+    /*const [page, setPage] = React.useState(0);
+    const [numberOfItemsPerPage, onItemsPerPageChange] = React.useState(numberOfItemsPerPageList[0]);
+    const fromm = page * numberOfItemsPerPage;
+    const to = Math.min((page + 1) * numberOfItemsPerPage, items.length) 
+
+    React.useEffect(() => {
+        setPage(0);
+     }, [numberOfItemsPerPage]);   */
 
     useEffect(() => {
         dispatch(getCourtTypes());
@@ -76,9 +70,10 @@ export default function({ navigation }) {
         );
     }, [courtTypeRef]);
 
-    function showLocation(e) {
-        console.log(e)
-        setModalVisible(true)
+    function showLocation(id) {
+      console.log(id)
+      setCourt(courts[id])
+      setModalVisible(true)
     }
 
     let type = [];
@@ -103,21 +98,21 @@ export default function({ navigation }) {
 
     const RenderDataTable = () => {
         return (
-            <DataTable> 
-                <DataTable.Header>
-                    <DataTable.Title>Name</DataTable.Title>
-                    <DataTable.Title>Location</DataTable.Title>
-                    <DataTable.Title>More info</DataTable.Title>
-                </DataTable.Header>
-                {courts.map((court, index) =>(
-                    <DataTable.Row>
-                        <DataTable.Cell>{court.name}</DataTable.Cell>
-                        <DataTable.Cell> 
-                            <Button id={index} title={"edit"} onPress={(event) => showLocation(event)} />
-                        </DataTable.Cell>
-                    </DataTable.Row>
-                ))}
-            </DataTable>
+                <DataTable> 
+                    <DataTable.Header>
+                        <DataTable.Title>Name</DataTable.Title>
+                        <DataTable.Title>Location</DataTable.Title>
+                        <DataTable.Title>More info</DataTable.Title>
+                    </DataTable.Header>
+                    {courts.map((court, index) =>(
+                        <DataTable.Row>
+                            <DataTable.Cell>{court.name}</DataTable.Cell>
+                            <DataTable.Cell> 
+                                <Button id={index} title={"edit"}  onPress={()=>showLocation(index)} />
+                            </DataTable.Cell>
+                        </DataTable.Row>
+                    ))}
+                </DataTable>
         )
     }
     
@@ -147,8 +142,8 @@ export default function({ navigation }) {
             <View>
                 {RenderDataTable()}
             </View>
-
             <View>
+
             <Modal
                 animationType="slide"
                 transparent={true}
@@ -167,7 +162,8 @@ export default function({ navigation }) {
                             </Pressable>
                         </View>
                     </View>
-                </Modal>         
+                </Modal> 
+
             </View>
         </View>
     )

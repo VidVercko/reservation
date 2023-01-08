@@ -24,8 +24,11 @@ export default ({ navigation }) => {
         dispatch(userLogin(user));
       }
     
-    const [username, setUsername] = useState("mobilni_test");
-    const [password, setPassword] = useState("Mycfyt-nehben-6vypmo");
+    //const [username, setUsername] = useState("mobilni_test");
+    //const [password, setPassword] = useState("Mycfyt-nehben-6vypmo");
+
+    const [username, setUsername] = useState("janezs");
+    const [password, setPassword] = useState("geslo123");
 
     useEffect(() => {
         dispatch(userLogout());
