@@ -1,16 +1,11 @@
 import * as TYPE from './types';
 
 const initialState = {
-    reservations: [],
     companies: [],
     courtTypes: [],
     locationCourts: [],
     locations: [],
-    locationDetail: {},
-    courtDetail: {},
-    cities: [],
-    detailLoading: false,
-    loading: false
+    loading: 0
 };
 
 export default function (state = initialState, action) {
@@ -42,34 +37,6 @@ export default function (state = initialState, action) {
             return { ...state, loading: false, locationCourts: action.payload.locationCourts };
         case TYPE.COMMON_GET_COURTS_FAIL:
             return { ...state, loading: false, locationCourts: [] };
-
-        case TYPE.COMMON_GET_COURT_DETAIL_START:
-            return { ...state, detailLoading: true, courtDetail: {} };
-        case TYPE.COMMON_GET_COURT_DETAIL_SUCCESS:
-            return { ...state, detailLoading: false, courtDetail: action.payload.courtDetail };
-        case TYPE.COMMON_GET_COURT_DETAIL_FAIL:
-            return { ...state, detailLoading: false, courtDetail: {} };
-
-        case TYPE.COMMON_GET_LOCATION_DETAIL_START:
-            return { ...state, detailLoading: true, locationDetail: {} };
-        case TYPE.COMMON_GET_LOCATION_DETAIL_SUCCESS:
-            return { ...state, detailLoading: false, locationDetail: action.payload.locationDetail };
-        case TYPE.COMMON_GET_LOCATION_DETAIL_FAIL:
-            return { ...state, detailLoading: false, locationDetail: {} };
-
-        case TYPE.COMMON_GET_CITIES_START:
-            return { ...state, loading: true, cities: [] };
-        case TYPE.COMMON_GET_CITIES_SUCCESS:
-            return { ...state, loading: false, cities: action.payload.cities };
-        case TYPE.COMMON_GET_CITIES_FAIL:
-            return { ...state, loading: false, cities: {} };
-
-        case TYPE.COMMON_GET_RESERVATIONS_START:
-            return { ...state, loading: true, reservations: [] };
-        case TYPE.COMMON_GET_RESERVATIONS_SUCCESS:
-            return { ...state, loading: false, reservations: action.payload.reservations };
-        case TYPE.COMMON_GET_RESERVATIONS_FAIL:
-            return { ...state, loading: false, reservations: [] };
 
         default:
             return state;

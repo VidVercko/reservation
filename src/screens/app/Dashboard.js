@@ -3,21 +3,12 @@ import { Text, View, Modal, StyleSheet, Pressable } from 'react-native'
 import { Button } from 'react-native-elements'
 import { useSelector, useDispatch } from "react-redux";
 import {Title, DataTable, Paper} from 'react-native-paper';
-import { getReservations } from '../../actions/client';
 
 export default function({ navigation }) {
     const [modalVisible, setModalVisible] = useState(false);
 
-    const dispatch = useDispatch();
 
-    const isLoading = useSelector((state) => state.common.loading);
-    const reservations = useSelector((state) => state.common.reservations ?? []);
-  
-    useEffect(() => {
-      dispatch(getReservations());
-    }, []);
-
-    const res = [
+    const reservations = [
         {
           location: 'Ljubljana',
           type: 'Basketball',
@@ -44,8 +35,6 @@ export default function({ navigation }) {
         },
       ];
 
-    console.log(reservations);
-
 
     function showLocation(e) {
         console.log(e)
@@ -65,10 +54,10 @@ export default function({ navigation }) {
                 {
                 reservations.map((data, index) =>(
                     <DataTable.Row>
-                        <DataTable.Cell>{data.court.name}</DataTable.Cell>
-                        <DataTable.Cell>{data.location.name}</DataTable.Cell>
-                        <DataTable.Cell>{data.date}</DataTable.Cell>
-                        <DataTable.Cell>{data.schedule.start_time}</DataTable.Cell>
+                        <DataTable.Cell>{data.type}</DataTable.Cell>
+                        <DataTable.Cell>{data.location}</DataTable.Cell>
+                        <DataTable.Cell>{data.time_start}</DataTable.Cell>
+                        <DataTable.Cell>{data.time_end}</DataTable.Cell>
                         <DataTable.Cell> 
                             <Button id={index} title={"edit"} onPress={(event) => showLocation(event)} />
                         </DataTable.Cell>
