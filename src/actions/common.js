@@ -107,3 +107,22 @@ export const getCourts = filters => {
         });
     };
 }
+
+export const getCourtDetail = id => {
+    return async (dispatch, getState) => {
+        const { accessToken } = getState().user;
+        dispatch({ type: TYPE.COMMON_GET_COURT_DETAIL_START });
+        apiRequest({
+            url: `/courts/${id}/`,
+            method: 'GET',
+            token: accessToken
+        }).then((res) => {
+            dispatch({
+                type: TYPE.COMMON_GET_COURT_DETAIL_SUCCESS,
+                payload: { courtDetail: res ?? {} }
+            });
+        }).catch((_) => {
+            dispatch({ type: TYPE.COMMON_GET_COURT_DETAIL_FAIL });
+        });
+    };
+}

@@ -13,15 +13,13 @@ import { useParams } from "react-router-dom";
 import MakeReservationModal from '../../components/modals/MakeReservationModal';
 import WeeklyCalendar from 'react-native-weekly-calendar';
 import { Provider as PaperProvider } from 'react-native-paper';
-
-
-
+import { makeReservation } from '../../actions/client';
 
 export default function({ navigation }) {
     const dispatch = useDispatch();
     const [court, setCourt] = useState({});
 
-  
+    const timeline = useSelector((state) => state.management.timeline);
     const isLoading = useSelector((state) => state.common.loading);
     const courts = useSelector((state) => state.common.locationCourts ?? []);
     const courtTypes = useSelector((state) => state.common.courtTypes);
@@ -38,8 +36,23 @@ export default function({ navigation }) {
     const { courtId, locationId } = useParams();
 
     const [scheduleDate, setScheduleDate] = useState(new Date());
+    const [events, setEvents] = useState([]);
 
-    console.log(scheduleDate);
+
+    function fetchScheduleData(filters, id, courtId) {
+      dispatch(
+        getManagementSchedule({
+          court: courtId,
+          location: id,
+          ...filters,
+        })
+      );
+    }
+  
+    useEffect(() => {
+      fetchScheduleData({}, 0);
+      dispatch(getCourtDetail(courtId));
+    }, []);
 
     const sampleEvents = [
       { 'start': '2023-01-02 08:00:00', 'duration': '08:00:00', 'note': 'PROSTO' },
@@ -59,9 +72,19 @@ export default function({ navigation }) {
         );
     }, [courtTypeRef]);
 
+    console.log(courts)
+
     function showLocation(id) {
-      console.log(id)
-      setCourt(courts[id])
+      fetchScheduleData({}, courts[id].location.id, courts[id].id);
+      console.log(timeline)
+
+      for (const tl in timeline) {
+        let time = '02:00:00'
+        setEvents([
+          {'start':timeline[tl].start_datetime.replace('T', ' '), 'duration':time, 'note':timeline[tl].title},
+          ...events
+        ]);
+      }
       setModalVisible(true)
     }
 
@@ -83,8 +106,6 @@ export default function({ navigation }) {
         );
     }
 
-    console.log(courts)
-
     const numberOfItemsPerPageList = [2,3,4];
 
     const items = [
@@ -102,8 +123,6 @@ export default function({ navigation }) {
       },
     ];
 
-    console.log(courtTypes)
-
     function functionCombined() {
       courtTypeRef.current = selectedType
       filter();
@@ -118,7 +137,6 @@ export default function({ navigation }) {
     React.useEffect(() => {
        setPage(0);
     }, [numberOfItemsPerPage]);
-
 
     const RenderDataTable = () => {
         return (
@@ -190,7 +208,7 @@ export default function({ navigation }) {
                 }}>
                 <View style={styles.centeredView}>
                     <View style={styles.modalView}>
-                        <WeeklyCalendar events={sampleEvents} style={{ height: 400 }} />
+                        <WeeklyCalendar events={events} style={{ height: 400 }} />
                             <Pressable
                                 style={[styles.button, styles.buttonClose]}
                                 onPress={() => setModalVisible(!modalVisible)} >

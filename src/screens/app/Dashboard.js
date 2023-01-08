@@ -17,6 +17,13 @@ export default function({ navigation }) {
       dispatch(getReservations());
     }, []);
 
+    React.useEffect(() => {
+      const unsubscribe = navigation.addListener('focus', () => {
+        dispatch(getReservations());
+      });
+        return unsubscribe;
+    }, [navigation]);
+
     function showLocation(id) {
       console.log(id)
       setReservation(reservations[id])

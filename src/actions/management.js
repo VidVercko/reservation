@@ -163,6 +163,7 @@ export const getManagementSchedule = (filters) => {
         if (filters?.date) {
             url += `&date=${filters.date}`;
         }
+        console.log(url)
 
         dispatch({ type: TYPE.MANAGEMENT_GET_SCHEDULE_START });
         apiRequest({
@@ -170,6 +171,8 @@ export const getManagementSchedule = (filters) => {
             method: 'GET',
             token: accessToken
         }).then((res) => {
+            console.log(res)
+
             dispatch({
                 type: TYPE.MANAGEMENT_GET_SCHEDULE_SUCCESS,
                 payload: { timeline: res ?? [] }
