@@ -3,7 +3,7 @@ import { Text, View, Modal, StyleSheet, Pressable, ScrollView } from 'react-nati
 import { Button, SearchBar } from 'react-native-elements'
 import { useSelector, useDispatch } from "react-redux";
 import { SelectList } from 'react-native-dropdown-select-list'
-import { Title, DataTable, Paper , PaperProvider} from 'react-native-paper';
+import { Title, DataTable, Paper} from 'react-native-paper';
 import moment from "moment";
 import Timetable from "react-native-calendar-timetable";
 import MyItemCard from '../../components/CardComponent';
@@ -12,6 +12,8 @@ import { getManagementSchedule } from '../../actions/management';
 import { useParams } from "react-router-dom";
 import MakeReservationModal from '../../components/modals/MakeReservationModal';
 import WeeklyCalendar from 'react-native-weekly-calendar';
+import { Provider as PaperProvider } from 'react-native-paper';
+
 
 
 
@@ -51,21 +53,12 @@ export default function({ navigation }) {
       { 'start': '2023-01-02 21:00:00', 'duration': '01:00:00', 'note': 'PROSTO' },
   ]
 
-    /*const [page, setPage] = React.useState(0);
-    const [numberOfItemsPerPage, onItemsPerPageChange] = React.useState(numberOfItemsPerPageList[0]);
-    const fromm = page * numberOfItemsPerPage;
-    const to = Math.min((page + 1) * numberOfItemsPerPage, items.length) 
-
-    React.useEffect(() => {
-        setPage(0);
-     }, [numberOfItemsPerPage]);   */
-
     useEffect(() => {
         dispatch(getCourtTypes());
         dispatch(
           getCourts({
             search: searchRef?.current?.props?.value,
-            courtType: courtTypeRef?.current?.value,
+            courtType: courtTypeRef?.current,
           })
         );
     }, [courtTypeRef]);
@@ -89,30 +82,78 @@ export default function({ navigation }) {
         dispatch(
           getCourts({
             search: searchRef?.current?.props?.value,
-            courtType: courtTypeRef?.current?.value,
+            courtType: courtTypeRef?.current,
           })
         );
     }
 
     console.log(courts)
 
+    const numberOfItemsPerPageList = [6,7,8,9,10];
+
+    const items = [
+      {
+        key: 1,
+        name: 'Page 1',
+      },
+      {
+        key: 2,
+        name: 'Page 2',
+      },
+      {
+        key: 3,
+        name: 'Page 3',
+      },
+    ];
+
+    console.log(courtTypes)
+
+    function functionCombined() {
+      courtTypeRef.current = selectedType
+      filter();
+    }  
+  
+
+    const [page, setPage] = React.useState(0);
+    const [numberOfItemsPerPage, onItemsPerPageChange] = React.useState(numberOfItemsPerPageList[0]);
+    const fromm = page * numberOfItemsPerPage;
+    const to = Math.min((page + 1) * numberOfItemsPerPage, items.length);
+  
+    React.useEffect(() => {
+       setPage(0);
+    }, [numberOfItemsPerPage]);
+
+
     const RenderDataTable = () => {
         return (
-                <DataTable> 
-                    <DataTable.Header>
-                        <DataTable.Title>Name</DataTable.Title>
-                        <DataTable.Title>Location</DataTable.Title>
-                        <DataTable.Title>More info</DataTable.Title>
-                    </DataTable.Header>
-                    {courts.map((court, index) =>(
-                        <DataTable.Row>
-                            <DataTable.Cell>{court.name}</DataTable.Cell>
-                            <DataTable.Cell> 
-                                <Button id={index} title={"edit"}  onPress={()=>showLocation(index)} />
-                            </DataTable.Cell>
-                        </DataTable.Row>
-                    ))}
-                </DataTable>
+          <PaperProvider>
+            <DataTable> 
+                <DataTable.Header>
+                    <DataTable.Title>Name</DataTable.Title>
+                    <DataTable.Title>Location</DataTable.Title>
+                    <DataTable.Title>More info</DataTable.Title>
+                </DataTable.Header>
+                {courts.slice(page * numberOfItemsPerPage, page * numberOfItemsPerPage + numberOfItemsPerPage).map((court, index) =>(
+                    <DataTable.Row>
+                        <DataTable.Cell>{court.name}</DataTable.Cell>
+                        <DataTable.Cell> 
+                            <Button id={index} title={"edit"}  onPress={()=>showLocation(index)} />
+                        </DataTable.Cell>
+                    </DataTable.Row>
+                ))}
+        <DataTable.Pagination
+          page={page}
+          numberOfPages={Math.ceil(items.length / numberOfItemsPerPage)}
+          onPageChange={(page) => setPage(page)}
+          label={`${fromm + 1}-${to} of ${items.length}`}
+          showFastPaginationControls
+          numberOfItemsPerPageList={numberOfItemsPerPageList}
+          numberOfItemsPerPage={numberOfItemsPerPage}
+          onItemsPerPageChange={onItemsPerPageChange}
+          selectPageDropdownLabel={'Rows per page'}
+        />
+            </DataTable>
+          </PaperProvider>
         )
     }
     
@@ -136,9 +177,10 @@ export default function({ navigation }) {
             <SelectList 
                 setSelected={(val) => setSelectedType(val)} 
                 data={type} 
-                save="value"
+                onSelect={() => functionCombined()} 
+                save="key"
             />
-
+            
             <View>
                 {RenderDataTable()}
             </View>
@@ -163,7 +205,6 @@ export default function({ navigation }) {
                         </View>
                     </View>
                 </Modal> 
-
             </View>
         </View>
     )
