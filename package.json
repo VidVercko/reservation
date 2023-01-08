@@ -27,7 +27,6 @@
     "react-native-screens": "^3.18.2",
     "react-native-simple-toast": "^1.1.4",
     "react-native-svg": "^13.6.0",
-    "react-native-toast-message": "^2.1.5",
     "react-native-vector-icons": "^9.2.0",
     "react-native-weekly-calendar": "^0.2.0",
     "react-navigation": "^4.4.4",

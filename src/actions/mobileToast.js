@@ -1,13 +1,5 @@
-import toast from 'react-native-toast-message';
+import Toast from 'react-native-simple-toast';
 
-export const warning = (msg) => {
-    toast.warn(msg);
-}
-
-export const success = (msg) => {
-    toast.success(msg);
-}
-
-export const error = (msg) => {
-    toast.error(msg);
+export const showMsg = (msg) => {
+    Toast.show(msg, Toast.SHORT);
 }
