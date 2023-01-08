@@ -10,7 +10,6 @@ export default function({ navigation }) {
     const [modalVisible, setModalVisible] = useState(false);
     const [reservation, setReservation] = useState({});
 
-
     const dispatch = useDispatch();
     const reservations = useSelector((state) => state.common.reservations ?? []);
 

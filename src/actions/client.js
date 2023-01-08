@@ -42,7 +42,7 @@ export const makeReservation = ({ schedule, date }, callback) => {
     }
 }
 
-export const cancelReservation = (id, callback) => {
+export const cancelReservation = (id) => {
     return async (dispatch, getState) => {
         const { accessToken } = getState().user;
         dispatch({ type: TYPE.COMMON_DELETE_RESERVATION_START });
@@ -53,7 +53,6 @@ export const cancelReservation = (id, callback) => {
         }).then((_) => {
             toast.showMsg('Reservation was canceled!');
             dispatch({ type: TYPE.COMMON_DELETE_RESERVATION_SUCCESS });
-            callback();
         }).catch((_) => {
             toast.showMsg('Failed to cancel the reservation!');
             dispatch({ type: TYPE.COMMON_DELETE_RESERVATION_FAIL });

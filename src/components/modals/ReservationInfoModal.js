@@ -5,23 +5,28 @@ import { useSelector, useDispatch } from 'react-redux';
 import { getReservations } from '../../actions/client';
 import { Card, Actions, Text, DataTable} from 'react-native-paper';
 import { cancelReservation } from '../../actions/client';
+import { dateStr } from '../../actions/helper';
+import { useNavigate, useParams } from "react-router-dom";
+
 
 const windowWidth = Dimensions.get('window').width;
 
 export default function ({ visible, setVisible, reservation, setReservation}) {
     const dispatch = useDispatch();
+    const { courtId, locationId } = useParams();
+
+    const reservations = useSelector((state) => state.common.reservations ?? []);
 
     if(Object.keys(reservation).length === 0 && reservation.constructor === Object) { 
         return null;
     }
 
     function cancelRes() {
-        cancelReservation(reservation.id, () => {
-            const dateFilter = dateStr(scheduleDate);
-            fetchScheduleData({
-              date: dateFilter,
-            });
-          })    }
+        console.log(reservation.id)
+        dispatch(cancelReservation(reservation.id))
+        dispatch(getReservations());
+        setVisible(false)
+      }
 
     console.log(reservation.date);
 
