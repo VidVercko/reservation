@@ -11,16 +11,13 @@ import { getCourtTypes, getCourts, getCourtDetail, getLocationDetail } from '../
 import { getManagementSchedule } from '../../actions/management';
 import { useParams } from "react-router-dom";
 import MakeReservationModal from '../../components/modals/MakeReservationModal';
-import WeeklyCalendar from 'react-native-weekly-calendar';
 import { Provider as PaperProvider } from 'react-native-paper';
 import { makeReservation } from '../../actions/client';
 
 export default function({ navigation }) {
     const dispatch = useDispatch();
-    const [court, setCourt] = useState({});
 
     const timeline = useSelector((state) => state.management.timeline);
-    const isLoading = useSelector((state) => state.common.loading);
     const courts = useSelector((state) => state.common.locationCourts ?? []);
     const courtTypes = useSelector((state) => state.common.courtTypes);
   
@@ -31,12 +28,9 @@ export default function({ navigation }) {
     
     const [selectedType, setSelectedType] = React.useState("");
     const [modalVisible, setModalVisible] = useState(false);
-    const [date] = React.useState(new Date());
+
 
     const { courtId, locationId } = useParams();
-
-    const [scheduleDate, setScheduleDate] = useState(new Date());
-    const [events, setEvents] = useState([]);
 
 
     function fetchScheduleData(filters, id, courtId) {
@@ -54,14 +48,6 @@ export default function({ navigation }) {
       dispatch(getCourtDetail(courtId));
     }, []);
 
-    const sampleEvents = [
-      { 'start': '2023-01-02 08:00:00', 'duration': '08:00:00', 'note': 'PROSTO' },
-      { 'start': '2023-01-02 16:00:00', 'duration': '02:00:00', 'note': 'ODBOJKA - FIRMA X' },
-      { 'start': '2023-01-02 19:00:00', 'duration': '2:00:00', 'note': 'ODBOJKA - FIRMA Z' },
-      { 'start': '2023-01-02 18:00:00', 'duration': '01:00:00', 'note': 'PROSTO' },        
-      { 'start': '2023-01-02 21:00:00', 'duration': '01:00:00', 'note': 'PROSTO' },
-  ]
-
     useEffect(() => {
         dispatch(getCourtTypes());
         dispatch(
@@ -72,19 +58,10 @@ export default function({ navigation }) {
         );
     }, [courtTypeRef]);
 
-    console.log(courts)
-
-    function showLocation(id) {
-      fetchScheduleData({}, courts[id].location.id, courts[id].id);
-      console.log(timeline)
-
-      for (const tl in timeline) {
-        let time = '02:00:00'
-        setEvents([
-          {'start':timeline[tl].start_datetime.replace('T', ' '), 'duration':time, 'note':timeline[tl].title},
-          ...events
-        ]);
-      }
+    function showLocation(c) {
+      console.log(courts);
+      fetchScheduleData({}, c.location.id, c.id);
+      console.log(timeline);
       setModalVisible(true)
     }
 
@@ -127,7 +104,6 @@ export default function({ navigation }) {
       courtTypeRef.current = selectedType
       filter();
     }  
-  
 
     const [page, setPage] = React.useState(0);
     const [numberOfItemsPerPage, onItemsPerPageChange] = React.useState(numberOfItemsPerPageList[0]);
@@ -150,8 +126,10 @@ export default function({ navigation }) {
                 {courts.slice(page * numberOfItemsPerPage, page * numberOfItemsPerPage + numberOfItemsPerPage).map((court, index) =>(
                     <DataTable.Row>
                         <DataTable.Cell>{court.name}</DataTable.Cell>
+                        <DataTable.Cell>{court.location.name}</DataTable.Cell>
+
                         <DataTable.Cell> 
-                            <Button id={index} title={"edit"}  onPress={()=>showLocation(index)} />
+                            <Button id={index} title={"availablity"}  onPress={()=>showLocation(court)} />
                         </DataTable.Cell>
                     </DataTable.Row>
                 ))}
@@ -197,26 +175,7 @@ export default function({ navigation }) {
                 {RenderDataTable()}
             </View>
             <View>
-
-            <Modal
-                animationType="slide"
-                transparent={true}
-                visible={modalVisible}
-                onRequestClose={() => {
-                Alert.alert("Modal has been closed.");
-                setModalVisible(!modalVisible);
-                }}>
-                <View style={styles.centeredView}>
-                    <View style={styles.modalView}>
-                        <WeeklyCalendar events={events} style={{ height: 400 }} />
-                            <Pressable
-                                style={[styles.button, styles.buttonClose]}
-                                onPress={() => setModalVisible(!modalVisible)} >
-                                <Text style={styles.textStyle}>Hide Modal</Text>
-                            </Pressable>
-                        </View>
-                    </View>
-                </Modal> 
+              <MakeReservationModal visible={modalVisible} setVisible={setModalVisible} t = { timeline } ></MakeReservationModal>
             </View>
         </View>
     )

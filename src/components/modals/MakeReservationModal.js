@@ -2,53 +2,59 @@ import React, { useState, useEffect } from 'react'
 import { View, Dimensions, StyleSheet, Modal } from 'react-native';
 import { Overlay, Button } from 'react-native-elements';
 import { useSelector, useDispatch } from 'react-redux';
-import { getReservations } from '../../actions/client';
+import { getReservations, makeReservation } from '../../actions/client';
 import { Card, Actions, Text, DataTable} from 'react-native-paper';
 import { cancelReservation } from '../../actions/client';
-import WeeklyCalendar from 'react-native-weekly-calendar';
-
 
 const windowWidth = Dimensions.get('window').width;
 
-export default function ({ visible, setVisible, court, setCourt}) {
+export default function ({ visible, setVisible, t }) {
     const dispatch = useDispatch();
 
-    if(Object.keys(court).length === 0 && court.constructor === Object) { 
+    if(Object.keys(t).length === 0 && t.constructor === Object) { 
         return null;
     }
 
-    const sampleEvents = [
-        { 'start': '2023-01-02 08:00:00', 'duration': '08:00:00', 'note': 'PROSTO' },
-        { 'start': '2023-01-02 16:00:00', 'duration': '02:00:00', 'note': 'ODBOJKA - FIRMA X' },
-        { 'start': '2023-01-02 19:00:00', 'duration': '2:00:00', 'note': 'ODBOJKA - FIRMA Z' },
-        { 'start': '2023-01-02 18:00:00', 'duration': '01:00:00', 'note': 'PROSTO' },        
-        { 'start': '2023-01-02 21:00:00', 'duration': '01:00:00', 'note': 'PROSTO' },
-    ]
+    function vmesna(ind) {
+      dispatch(
+        makeReservation(
+          {
+            schedule: t[ind].court,
+            date: t[ind].start_datetime.split('T')[0],
+          },
+        ))
+    }
 
-    console.log(court);
+    const RenderDataTable = () => {
+      return (
+          <DataTable> 
+              <DataTable.Header>
+                  <DataTable.Title>TERM</DataTable.Title>
+              </DataTable.Header>
+              {
+              t.map((data, index) =>(
+                  <DataTable.Row>
+                      <DataTable.Cell>
+                          <Button id={index} title={data.start_datetime.replace('T', " ")} onPress={()=>vmesna(index)}  />
+                      </DataTable.Cell>
+                  </DataTable.Row>
+              ))}
+          </DataTable>
+      )
+    }
 
     return (
-            <Modal
-                animationType="slide"
-                transparent={true}
-                visible={visible}
-                onRequestClose={() => {
-                    setVisible(!visible);
-                }}>
-    
+      <Overlay 
+            overlayStyle={{
+                width: windowWidth * .9,
+            }}
+            
+            isVisible={visible}
+            onBackdropPress={() => setVisible(false)}>
                 <View>
-                <View style={styles.centeredView}>
-                    <View style={styles.modalView}>
-                        <WeeklyCalendar events={sampleEvents} style={{ height: 400 }} />
-                            <Button
-                                style={[styles.button, styles.buttonClose]}
-                                onPress={() => setVisible(!visible)} title={"close"} >
-                                close
-                            </Button>
-                        </View>
-                    </View>
+                  { RenderDataTable() }
                 </View>
-            </Modal>
+        </Overlay>
     )
 }
 

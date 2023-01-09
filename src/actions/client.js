@@ -11,7 +11,6 @@ export const getReservations = () => {
             method: 'GET',
             token: accessToken
         }).then((res) => {
-            console.log(res);
             dispatch({
                 type: TYPE.COMMON_GET_RESERVATIONS_SUCCESS,
                 payload: { reservations: res?.results ?? [] }
@@ -22,7 +21,7 @@ export const getReservations = () => {
     };
 }
 
-export const makeReservation = ({ schedule, date }, callback) => {
+export const makeReservation = ({ schedule, date }) => {
     return async (dispatch, getState) => {
         const { accessToken } = getState().user;
         dispatch({ type: TYPE.COMMON_CREATE_RESERVATION_START });
@@ -34,7 +33,6 @@ export const makeReservation = ({ schedule, date }, callback) => {
         }).then((_) => {
             toast.showMsg('Reservation was made!');
             dispatch({ type: TYPE.COMMON_CREATE_RESERVATION_SUCCESS });
-            callback();
         }).catch((_) => {
             toast.showMsg('Failed to make the reservation!');
             dispatch({ type: TYPE.COMMON_CREATE_RESERVATION_FAIL });

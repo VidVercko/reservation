@@ -62,6 +62,8 @@ export function apiRequest({ url, method, body, okStatus, token }) {
         method, body
     };
 
+    console.log(requestObject);
+
     if (token) {
         requestObject = {
             ...requestObject, headers: {
