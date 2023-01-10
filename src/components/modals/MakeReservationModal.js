@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { colors } from '../../assets/style';
 import { View, Dimensions, StyleSheet, Modal } from 'react-native';
 import { Overlay, Button } from 'react-native-elements';
 import { useSelector, useDispatch } from 'react-redux';
@@ -35,7 +36,13 @@ export default function ({ visible, setVisible, t }) {
               t.map((data, index) =>(
                   <DataTable.Row>
                       <DataTable.Cell>
-                          <Button id={index} title={data.start_datetime.replace('T', " ")} onPress={()=>vmesna(index)}  />
+                          <Button
+                              buttonStyle={{
+                              backgroundColor: colors.dark,
+                              borderRadius: 10,
+                              height: 45
+                            }}                          
+                            id={index} title={data.start_datetime.replace('T', " ")} onPress={()=>vmesna(index)}  />
                       </DataTable.Cell>
                   </DataTable.Row>
               ))}

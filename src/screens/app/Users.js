@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef  } from 'react'
-import { Text, View, Modal, StyleSheet, Pressable, ScrollView } from 'react-native'
+import { Text, View, Modal, StyleSheet, ImageBackground, ScrollView } from 'react-native'
 import { Button, SearchBar } from 'react-native-elements'
 import { useSelector, useDispatch } from "react-redux";
 import { SelectList } from 'react-native-dropdown-select-list'
@@ -13,6 +13,8 @@ import { useParams } from "react-router-dom";
 import MakeReservationModal from '../../components/modals/MakeReservationModal';
 import { Provider as PaperProvider } from 'react-native-paper';
 import { makeReservation } from '../../actions/client';
+import image from "../../assets/landing1.jpg"
+import { colors } from '../../assets/style';
 
 export default function({ navigation }) {
     const dispatch = useDispatch();
@@ -129,7 +131,12 @@ export default function({ navigation }) {
                         <DataTable.Cell>{court.location.name}</DataTable.Cell>
 
                         <DataTable.Cell> 
-                            <Button id={index} title={"availablity"}  onPress={()=>showLocation(court)} />
+                            <Button buttonStyle={{
+                                    backgroundColor: colors.dark,
+                                    borderRadius: 10,
+                                    height: 45
+                                }}                            
+                            id={index} title={"availablity"}  onPress={()=>showLocation(court)} />
                         </DataTable.Cell>
                     </DataTable.Row>
                 ))}
@@ -154,10 +161,13 @@ export default function({ navigation }) {
 
     return (
         <View>
+          <ImageBackground source={image} style={ {width: "100%", height: "100%"}}>
+
             <Text>
                 Available reservations
             </Text>
             <SearchBar
+                platform='default'
                 placeholder="Type Here..."
                 onChangeText={updateSearch}
                 value={search}
@@ -177,50 +187,7 @@ export default function({ navigation }) {
             <View>
               <MakeReservationModal visible={modalVisible} setVisible={setModalVisible} t = { timeline } ></MakeReservationModal>
             </View>
+            </ImageBackground>
         </View>
     )
 }
-
-const styles = StyleSheet.create({
-    centeredView: {
-      flex: 1,
-      justifyContent: "center",
-      alignItems: "center",
-      marginTop: 22
-    },
-    modalView: {
-      margin: 20,
-      backgroundColor: "white",
-      borderRadius: 20,
-      padding: 35,
-      alignItems: "center",
-      shadowColor: "#000",
-      shadowOffset: {
-        width: 0,
-        height: 2
-      },
-      shadowOpacity: 0.25,
-      shadowRadius: 4,
-      elevation: 5
-    },
-    button: {
-      borderRadius: 20,
-      padding: 10,
-      elevation: 2
-    },
-    buttonOpen: {
-      backgroundColor: "#F194FF",
-    },
-    buttonClose: {
-      backgroundColor: "#2196F3",
-    },
-    textStyle: {
-      color: "white",
-      fontWeight: "bold",
-      textAlign: "center"
-    },
-    modalText: {
-      marginBottom: 15,
-      textAlign: "center"
-    }
-  });

@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react'
-import { Text, View, Modal, StyleSheet, Pressable } from 'react-native'
+import { Text, View, Modal, StyleSheet, ImageBackground } from 'react-native'
 import { Button } from 'react-native-elements'
 import { useSelector, useDispatch } from "react-redux";
 import {Title, DataTable, Paper} from 'react-native-paper';
 import { getReservations } from '../../actions/client';
 import ReservationInfoModal from '../../components/modals/ReservationInfoModal';
+import image from "../../assets/landing1.jpg"
+import { colors } from '../../assets/style';
 
 export default function({ navigation }) {
     const [modalVisible, setModalVisible] = useState(false);
@@ -46,7 +48,12 @@ export default function({ navigation }) {
                         <DataTable.Cell>{data.schedule.day_formatted}</DataTable.Cell>
                         <DataTable.Cell>{data.schedule.start_time}</DataTable.Cell>
                         <DataTable.Cell> 
-                            <Button id={index} title={"edit"} onPress={()=>showLocation(index)}  />
+                            <Button buttonStyle={{
+                                    backgroundColor: colors.dark,
+                                    borderRadius: 10,
+                                    height: 45
+                                }} 
+                                id={index} title={"edit"} onPress={()=>showLocation(index)}  />
                         </DataTable.Cell>
                     </DataTable.Row>
                 ))}
@@ -55,6 +62,7 @@ export default function({ navigation }) {
       }
 
     return (
+      <ImageBackground source={image} style={ {width: "100%", height: "100%"}}>
         <View className="center" style={{ marginTop: 20 }}>
             <View className="main-container">
                 <View className="page-header header-row">
@@ -66,6 +74,7 @@ export default function({ navigation }) {
                 </View>
             </View>
         </View>
+      </ImageBackground>
     )
 }
 
@@ -90,17 +99,6 @@ const styles = StyleSheet.create({
       shadowOpacity: 0.25,
       shadowRadius: 4,
       elevation: 5
-    },
-    button: {
-      borderRadius: 20,
-      padding: 10,
-      elevation: 2
-    },
-    buttonOpen: {
-      backgroundColor: "#F194FF",
-    },
-    buttonClose: {
-      backgroundColor: "#2196F3",
     },
     textStyle: {
       color: "white",

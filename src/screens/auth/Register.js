@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { View, Image} from 'react-native';
+import { View, ImageBackground} from 'react-native';
 import { colors } from '../../assets/style';
 import { Input, Button } from 'react-native-elements';
+import image from "../../assets/landing1.jpg"
+import AuthWrapper from '../../components/AuthWrapper';
 import { userRegister, userLogout } from '../../actions/user';
 
 export default ({ navigation }) => {
     const isLoading = useSelector(state => state.user.loading === true);
-    const isAuth = useSelector(state => state.user.jwt !== null);
+    const isAuth = useSelector((state) => !!state.user.accessToken);
     const dispatch = useDispatch();
 
     const [email, setEmail] = useState("");
@@ -29,6 +31,10 @@ export default ({ navigation }) => {
 
     return (
         <View style={{ flex: 1, backgroundColor: colors.background, justifyContent: 'center', alignItems: 'center' }}>
+            <ImageBackground source={image} style={ {width: "100%", height: "100%"}}>
+
+            <AuthWrapper>
+
             <Input
                 placeholder='Full name'
                 leftIcon={{ type: 'ion-icons', name: 'person', color: colors.dark }}
@@ -64,6 +70,8 @@ export default ({ navigation }) => {
                 onPress={handleRegister}
                 loading={isLoading}
             />
+            </AuthWrapper>
+            </ImageBackground>
         </View>
     )
 }

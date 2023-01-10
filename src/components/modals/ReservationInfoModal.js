@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { View, Dimensions, StyleSheet } from 'react-native';
+import { colors } from '../../assets/style';
 import { Overlay, Button } from 'react-native-elements';
 import { useSelector, useDispatch } from 'react-redux';
 import { getReservations } from '../../actions/client';
@@ -48,14 +49,22 @@ export default function ({ visible, setVisible, reservation, setReservation}) {
                         </Card.Content>
                         <Card.Actions>
                             <Button
-                                style={[styles.button, styles.buttonClose]}
-                                onPress={() => setVisible(!visible)} title={"close"} >
-                                close
+                              buttonStyle={{
+                                backgroundColor: colors.dark,
+                                borderRadius: 10,
+                                height: 45
+                              }}
+                              onPress={() => setVisible(!visible)} title={"close"} >
+                              close
                             </Button>
                             <Button
-                                style={[styles.button, styles.buttonClose]}
-                                onPress={() => cancelRes()} title={"Cancel"} >
-                                Cancel
+                              buttonStyle={{
+                                backgroundColor: colors.dark,
+                                borderRadius: 10,
+                                height: 45
+                              }}                             
+                              onPress={() => cancelRes()} title={"Cancel"} >
+                              Cancel
                             </Button>
                         </Card.Actions>
                     </Card>
@@ -85,17 +94,6 @@ const styles = StyleSheet.create({
       shadowOpacity: 0.25,
       shadowRadius: 4,
       elevation: 5
-    },
-    button: {
-      borderRadius: 20,
-      padding: 10,
-      elevation: 2
-    },
-    buttonOpen: {
-      backgroundColor: "#F194FF",
-    },
-    buttonClose: {
-      backgroundColor: "#2196F3",
     },
     textStyle: {
       color: "white",
