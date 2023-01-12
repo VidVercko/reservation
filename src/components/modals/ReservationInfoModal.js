@@ -43,6 +43,8 @@ export default function ({ visible, setVisible, reservation, setReservation}) {
                             <Text variant="bodymedium"> { reservation.schedule.day_formatted }</Text>
                             <Text variant="bodymedium"> { reservation.date }</Text>
                             <Text variant="bodyMedium"> { reservation.schedule.start_time }</Text>
+                            <Text variant="bodyMedium"> { reservation.schedule.end_time }</Text>
+
                         </Card.Content>
                         <Card.Actions>
                             <Button
