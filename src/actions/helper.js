@@ -62,8 +62,6 @@ export function apiRequest({ url, method, body, okStatus, token }) {
         method, body
     };
 
-    console.log(requestObject);
-
     if (token) {
         requestObject = {
             ...requestObject, headers: {
@@ -71,7 +69,7 @@ export function apiRequest({ url, method, body, okStatus, token }) {
             }
         }
     }
-
+    
     return new Promise(async (resolve, reject) => {
         try {
             const response = await fetch(`${API}${url}`, requestObject);
@@ -163,4 +161,14 @@ export function addTimeToDate(date, time) {
     newDate.setMinutes(minutes);
     newDate.setSeconds(seconds);
     return newDate;
+}
+
+export function handleWeekDay(date) {
+    // get previous week if sunday
+    date = date ?? new Date();
+    if (date.getDay() === 0) {
+        return getDateWithOffset(date, -1);
+    }
+
+    return date;
 }

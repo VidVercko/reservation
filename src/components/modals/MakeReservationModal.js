@@ -5,22 +5,53 @@ import { Overlay, Button } from 'react-native-elements';
 import { useSelector, useDispatch } from 'react-redux';
 import { getReservations, makeReservation } from '../../actions/client';
 import { Card, Actions, Text, DataTable} from 'react-native-paper';
-import { cancelReservation } from '../../actions/client';
+import {
+        cmpDates,
+        formatFromTo,
+        handleCourtTimelineTitle,
+        handleWeekDay,
+        dateStr,
+      } from '../../actions/helper';
 
 const windowWidth = Dimensions.get('window').width;
 
 export default function ({ visible, setVisible, t }) {
     const dispatch = useDispatch();
+    const [scheduleDate, setScheduleDate] = useState(handleWeekDay());
+
 
     if(Object.keys(t).length === 0 && t.constructor === Object) { 
         return null;
+    }
+
+    function handlePreviousWeek() {
+      const newDate = getDateWithOffset(scheduleDate, -7);
+      setScheduleDate(newDate);
+      fetchScheduleData({ date: dateStr(newDate) });
+    }
+  
+    function handleNextWeek() {
+      const newDate = getDateWithOffset(scheduleDate, 7);
+      setScheduleDate(newDate);
+      fetchScheduleData({ date: dateStr(newDate) });
+    }
+  
+    function handleDateOffset(dayOffset, time) {
+      const today = new Date();
+      const thisMonday = getNearestPastMonday(today);
+      let eventDate = getDateWithOffset(thisMonday, parseInt(dayOffset) - 1);
+      if (today.getDay() === 0) {
+        eventDate = getDateWithOffset(eventDate, -7);
+      }
+      const dateWithTime = addTimeToDate(eventDate, time);
+      return dateWithTime;
     }
 
     function vmesna(ind) {
       dispatch(
         makeReservation(
           {
-            schedule: t[ind].court,
+            schedule: t[ind].id,
             date: t[ind].start_datetime.split('T')[0],
           },
         ))
@@ -40,9 +71,14 @@ export default function ({ visible, setVisible, t }) {
                               buttonStyle={{
                               backgroundColor: colors.dark,
                               borderRadius: 10,
-                              height: 45
-                            }}                          
-                            id={index} title={data.start_datetime.replace('T', " ")} onPress={()=>vmesna(index)}  />
+                              height: 45,
+                              width: '100%'
+                            }} 
+                            titleStyle={{
+                              color: "white",
+                              fontSize: 16,
+                            }}
+                            id={index} title={data.title + " " + data.start_datetime.split('T')[0]} onPress={()=>vmesna(index)}  />
                       </DataTable.Cell>
                   </DataTable.Row>
               ))}

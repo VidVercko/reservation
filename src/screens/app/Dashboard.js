@@ -34,7 +34,7 @@ export default function({ navigation }) {
 
     const RenderDataTable = () => {
         return (
-            <DataTable> 
+            <DataTable key="datatable"> 
                 <DataTable.Header>
                     <DataTable.Title>Location</DataTable.Title>
                     <DataTable.Title>Day</DataTable.Title>
@@ -53,7 +53,7 @@ export default function({ navigation }) {
                                     borderRadius: 10,
                                     height: 45
                                 }} 
-                                id={index} title={"edit"} onPress={()=>showLocation(index)}  />
+                                key={data.id} id={index} title={"edit"} onPress={()=>showLocation(index)}  />
                         </DataTable.Cell>
                     </DataTable.Row>
                 ))}

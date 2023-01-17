@@ -163,7 +163,8 @@ export const getManagementSchedule = (filters) => {
         if (filters?.date) {
             url += `&date=${filters.date}`;
         }
-        console.log(url)
+
+        console.log(url);
 
         dispatch({ type: TYPE.MANAGEMENT_GET_SCHEDULE_START });
         apiRequest({

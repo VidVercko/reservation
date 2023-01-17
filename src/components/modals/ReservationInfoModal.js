@@ -23,13 +23,10 @@ export default function ({ visible, setVisible, reservation, setReservation}) {
     }
 
     function cancelRes() {
-        console.log(reservation.id)
         dispatch(cancelReservation(reservation.id))
         dispatch(getReservations());
         setVisible(false)
       }
-
-    console.log(reservation.date);
 
     return (
         <Overlay 

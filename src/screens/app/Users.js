@@ -4,17 +4,20 @@ import { Button, SearchBar } from 'react-native-elements'
 import { useSelector, useDispatch } from "react-redux";
 import { SelectList } from 'react-native-dropdown-select-list'
 import { Title, DataTable, Paper} from 'react-native-paper';
-import moment from "moment";
-import Timetable from "react-native-calendar-timetable";
-import MyItemCard from '../../components/CardComponent';
 import { getCourtTypes, getCourts, getCourtDetail, getLocationDetail } from '../../actions/common';
 import { getManagementSchedule } from '../../actions/management';
 import { useParams } from "react-router-dom";
 import MakeReservationModal from '../../components/modals/MakeReservationModal';
-import { Provider as PaperProvider } from 'react-native-paper';
-import { makeReservation } from '../../actions/client';
 import image from "../../assets/landing1.jpg"
 import { colors } from '../../assets/style';
+import {
+  dateStr,
+  cmpDates,
+  formatFromTo,
+  handleCourtTimelineTitle,
+  handleWeekDay,
+} from '../../actions/helper';
+
 
 export default function({ navigation }) {
     const dispatch = useDispatch();
@@ -31,9 +34,9 @@ export default function({ navigation }) {
     const [selectedType, setSelectedType] = React.useState("");
     const [modalVisible, setModalVisible] = useState(false);
 
-
     const { courtId, locationId } = useParams();
 
+    const [scheduleDate, setScheduleDate] = useState(handleWeekDay());
 
     function fetchScheduleData(filters, id, courtId) {
       dispatch(
@@ -46,7 +49,9 @@ export default function({ navigation }) {
     }
   
     useEffect(() => {
-      fetchScheduleData({}, 0);
+      const dateFilter = dateStr(new Date("2023-01-17"));
+      console.log(dateFilter)
+      fetchScheduleData({date: dateFilter}, 0, courtId);
       dispatch(getCourtDetail(courtId));
     }, []);
 
@@ -61,8 +66,9 @@ export default function({ navigation }) {
     }, [courtTypeRef]);
 
     function showLocation(c) {
-      console.log(courts);
-      fetchScheduleData({}, c.location.id, c.id);
+      const dateFilter = dateStr(scheduleDate);
+      
+      fetchScheduleData({date: dateFilter}, c.location.id, c.id);
       console.log(timeline);
       setModalVisible(true)
     }
